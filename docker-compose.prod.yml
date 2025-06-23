@@ -1,0 +1,56 @@
+# Docker Compose para producción con PostgreSQL
+version: '3.8'
+
+services:
+  database:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: taskmanager_prod
+      POSTGRES_USER: taskmanager_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - taskmanager-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskmanager_user -d taskmanager_prod"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  taskmanager-app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - DATABASE_URL=jdbc:postgresql://database:5432/taskmanager_prod
+      - DATABASE_USERNAME=taskmanager_user
+      - DATABASE_PASSWORD=${DB_PASSWORD:-changeme}
+      - JAVA_OPTS=-Xms1024m -Xmx2048m -XX:+UseContainerSupport
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - taskmanager-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  postgres_data:
+
+networks:
+  taskmanager-network:
+    driver: bridge

@@ -1,0 +1,19 @@
+# Docker Compose para desarrollo
+version: '3.8'
+
+services:
+  taskmanager-dev:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_OPTS=-Xms512m -Xmx1024m
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - taskmanager-network
+
+networks:
+  taskmanager-network:
+    driver: bridge

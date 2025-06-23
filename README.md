@@ -26,29 +26,79 @@ API RESTful que convierte la gestión de tareas en una experiencia de videojuego
 
 ## 🛠️ Tecnologías
 
-- Java 17
-- Spring Boot 3.2.0
-- Spring Data JPA
-- Base de datos H2 (desarrollo)
-- Maven
+- **Backend**: Java 17, Spring Boot 3.2.0
+- **Persistencia**: Spring Data JPA con herencia SINGLE_TABLE
+- **Base de datos**: H2 (desarrollo/QA), PostgreSQL (producción)
+- **DTOs**: Mappers para separación de capas y seguridad
+- **Validación**: Bean Validation (@NotBlank, @Size, etc.)
+- **Testing**: JUnit 5 + MockMvc (65 tests implementados)
+- **Build**: Maven 3.6+
 
 ## 📦 Instalación y Uso
+
+### 🚀 Inicio Rápido
 
 ```bash
 # Clonar el repositorio
 git clone [url-del-repo]
-
-# Navegar al directorio
 cd mi-proyecto
 
-# Compilar
-mvn clean compile
+# Desarrollo (H2 en memoria)
+./scripts/start-dev.sh
 
-# Ejecutar
-mvn spring-boot:run
+# QA con tests (H2 persistente)  
+./scripts/start-qa.sh
+
+# Producción (requiere PostgreSQL)
+./scripts/start-prod.sh
 ```
 
-La aplicación estará disponible en `http://localhost:8080`
+### 🌍 Ambientes Disponibles
+
+| Ambiente | Puerto | Base de Datos | Script | URL |
+|----------|--------|---------------|--------|-----|
+| **DEV** | 8080 | H2 memoria | `./scripts/start-dev.sh` | http://localhost:8080 |
+| **QA** | 8081 | H2 archivo | `./scripts/start-qa.sh` | http://localhost:8081 |
+| **PROD** | 8080 | PostgreSQL | `./scripts/start-prod.sh` | http://localhost:8080 |
+
+### 🐳 Con Docker
+
+```bash
+# Desarrollo
+docker-compose up --build
+
+# Producción con PostgreSQL
+export DB_PASSWORD=secure_password
+docker-compose -f docker-compose.prod.yml up --build
+```
+
+## 🧪 Testing
+
+### Ejecutar Pruebas
+```bash
+# Todos los tests (65 tests)
+mvn test
+
+# Solo tests unitarios (32 tests)
+mvn test -Dtest="com.taskmanager.gamified.entity.*"
+
+# Solo tests de integración (24 tests) 
+mvn test -Dtest="com.taskmanager.gamified.integration.*"
+
+# Solo tests de API/controlador (9 tests)
+mvn test -Dtest="*TestControllerIntegrationTest"
+```
+
+### Cobertura
+- **Tests Unitarios**: Entidades, validaciones, lógica de negocio
+- **Tests de Integración**: Repositorios, queries custom, base de datos
+- **Tests de Controlador**: API endpoints, DTOs, validación, manejo errores
+
+### Arquitectura de Testing
+- **Base de datos**: H2 en memoria (aislada por test)
+- **Configuración**: `application-test.properties`
+- **Datos**: `data.sql` carga automática
+- **Frameworks**: JUnit 5, MockMvc, Spring Boot Test
 
 ## 📋 Ejemplos de Tareas
 
@@ -78,14 +128,24 @@ La aplicación estará disponible en `http://localhost:8080`
 - **Eventos**: Multiplicadores temporales especiales
 - **Historial**: Seguimiento de los últimos 12 meses
 
-## 🔮 Roadmap
+## ✅ Estado del Proyecto
 
-- [ ] Implementación básica del sistema
-- [ ] Sistema de logros
-- [ ] Rankings entre usuarios
+### Completado
+- [x] **Entidades JPA**: Usuario, Tarea, TareaEspecial, Evento, HistorialTarea
+- [x] **DTOs y Mappers**: Separación de capas, seguridad API
+- [x] **Repositorios**: Queries optimizadas con CASE ORDER BY
+- [x] **Base de datos**: H2 configurada con datos iniciales (21 tareas)
+- [x] **Multi-ambiente**: DEV, QA, PROD con configuraciones específicas
+- [x] **API REST**: Endpoints con DTOs y validación
+- [x] **Testing**: 65 tests (unitarios, integración, controlador)
+- [x] **Documentación**: CLAUDE.md, DTOS.md, DEPLOYMENT.md
+
+### 🔮 Próximos Pasos
+- [ ] Servicios de lógica de negocio (XP, niveles, streaks)
+- [ ] Controladores REST completos (/api/users, /api/tasks)
+- [ ] Sistema de logros y rankings
 - [ ] Migración a OAuth2
-- [ ] Base de datos PostgreSQL/MySQL
-- [ ] Interfaz web frontend
+- [ ] Interfaz web frontend (specs en FRONTEND_SPECS.md)
 - [ ] Aplicación móvil
 
 ---
