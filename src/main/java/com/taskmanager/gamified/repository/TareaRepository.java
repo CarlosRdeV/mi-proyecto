@@ -21,6 +21,11 @@ public interface TareaRepository extends JpaRepository<Tarea, Long> {
            "END, t.nombre ASC")
     List<Tarea> findByActivaTrueOrderByDificultadAscNombreAsc();
     
+    // Alias para compatibilidad con servicios
+    default List<Tarea> findByActivaTrueOrderByDificultad() {
+        return findByActivaTrueOrderByDificultadAscNombreAsc();
+    }
+    
     List<Tarea> findByDificultadAndActivaTrue(DificultadTarea dificultad);
     
     @Query("SELECT t FROM Tarea t WHERE t.activa = true AND TYPE(t) = Tarea")

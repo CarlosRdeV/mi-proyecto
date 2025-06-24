@@ -1,10 +1,11 @@
 # Frontend Specifications - Task Manager Gamificado
+**Versión v1.3.0** - *Sincronizado con backend funcional*
 
 ## Información del Proyecto
-- **Versión Backend**: v1.0.0
-- **Versión Frontend**: v1.0.0 (pendiente)
-- **Sincronización**: 2024-06-23
-- **Estado**: Especificación inicial
+- **Versión Backend**: v1.3.0 (API REST completa funcional)
+- **Versión Frontend**: v1.3.0 (pendiente implementación)
+- **Sincronización**: 2024-12-23
+- **Estado**: Especificaciones actualizadas - Backend listo para frontend
 
 ## Stack Tecnológico Propuesto
 

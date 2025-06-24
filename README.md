@@ -1,4 +1,5 @@
 # Task Manager Gamificado 🎮📋
+**Versión v1.3.0** - *Sistema completamente funcional*
 
 API RESTful que convierte la gestión de tareas en una experiencia de videojuego. Los usuarios ganan experiencia (XP), suben de nivel y mantienen rachas (streaks) completando tareas diarias.
 

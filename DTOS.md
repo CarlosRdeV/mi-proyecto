@@ -1,4 +1,5 @@
 # DTOs - Data Transfer Objects
+**Versión v1.3.0** - *Actualizado con servicios completos*
 
 ## Propósito
 

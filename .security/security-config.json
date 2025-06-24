@@ -1,0 +1,166 @@
+{
+  "securityValidation": {
+    "version": "1.3.0",
+    "lastExecution": "never",
+    "nextScheduledValidation": "30 days from first execution",
+    "validationFrequency": {
+      "regular": "monthly",
+      "beforeRelease": "mandatory",
+      "afterCriticalChanges": "immediate"
+    },
+    "compatibilityMode": {
+      "enabled": true,
+      "enforceRegressionTests": true,
+      "blockDisruptiveChanges": true,
+      "requireBaslineValidation": true
+    }
+  },
+  "tools": {
+    "owaspDependencyCheck": {
+      "enabled": true,
+      "version": "8.4.0",
+      "configFile": "./dependency-check-config.xml",
+      "outputFormats": ["HTML", "JSON", "XML"]
+    },
+    "spotbugs": {
+      "enabled": true,
+      "findSecBugsPlugin": true,
+      "excludeFilter": "./spotbugs-exclude.xml"
+    },
+    "mavenSecurity": {
+      "enabled": true,
+      "ossIndexPlugin": true,
+      "snapshotDependencies": "warn"
+    },
+    "sonarqube": {
+      "enabled": false,
+      "url": "http://localhost:9000",
+      "projectKey": "task-manager-gamificado"
+    }
+  },
+  "severityLevels": {
+    "critical": {
+      "responseTime": "4 hours",
+      "escalation": "immediate",
+      "blockRelease": true
+    },
+    "high": {
+      "responseTime": "24 hours", 
+      "escalation": "within 8 hours",
+      "blockRelease": true
+    },
+    "medium": {
+      "responseTime": "7 days",
+      "escalation": "within 3 days", 
+      "blockRelease": false
+    },
+    "low": {
+      "responseTime": "30 days",
+      "escalation": "optional",
+      "blockRelease": false
+    }
+  },
+  "categories": {
+    "owasp": {
+      "A01": "Broken Access Control",
+      "A02": "Cryptographic Failures",
+      "A03": "Injection", 
+      "A04": "Insecure Design",
+      "A05": "Security Misconfiguration",
+      "A06": "Vulnerable and Outdated Components",
+      "A07": "Identification and Authentication Failures",
+      "A08": "Software and Data Integrity Failures",
+      "A09": "Security Logging and Monitoring Failures",
+      "A10": "Server-Side Request Forgery"
+    },
+    "custom": {
+      "DEPENDENCY": "Vulnerable Dependencies",
+      "CONFIG": "Configuration Issues",
+      "CODE": "Code Quality Issues",
+      "INFRA": "Infrastructure Issues"
+    }
+  },
+  "reportFormats": {
+    "vulnerability": {
+      "idFormat": "VULN-YYYY-MM-DD-XXX",
+      "requiredFields": [
+        "dateDetected",
+        "severity", 
+        "category",
+        "description",
+        "location",
+        "impact",
+        "status"
+      ],
+      "optionalFields": [
+        "cve",
+        "cwe",
+        "solutionApplied",
+        "verificationMethod",
+        "resolutionTime"
+      ]
+    }
+  },
+  "notifications": {
+    "critical": {
+      "immediate": true,
+      "channels": ["email", "slack"],
+      "recipients": ["security-team", "tech-lead"]
+    },
+    "high": {
+      "immediate": false,
+      "channels": ["email"],
+      "recipients": ["tech-lead"]
+    },
+    "summary": {
+      "frequency": "weekly",
+      "channels": ["email"],
+      "recipients": ["team"]
+    }
+  },
+  "compliance": {
+    "owasp": {
+      "version": "2021",
+      "coverageTarget": "100%"
+    },
+    "dependencyTracking": {
+      "maxAge": "6 months",
+      "criticalMaxAge": "immediate"
+    }
+  },
+  "automation": {
+    "cicdIntegration": false,
+    "automaticFixing": {
+      "enabled": false,
+      "allowedTypes": ["dependency-updates"]
+    },
+    "scheduling": {
+      "enabled": true,
+      "cron": "0 2 * * 1"
+    }
+  },
+  "exclusions": {
+    "files": [
+      "*/test/**",
+      "*/target/**",
+      "*/node_modules/**"
+    ],
+    "vulnerabilities": {
+      "accepted": [],
+      "falsePositives": []
+    }
+  },
+  "metrics": {
+    "tracking": {
+      "totalVulnerabilities": true,
+      "vulnerabilitiesByCategory": true,
+      "resolutionTime": true,
+      "recurrentVulnerabilities": true
+    },
+    "targets": {
+      "zeroHighCritical": true,
+      "maxMediumAge": "7 days",
+      "dependencyUpdateFrequency": "monthly"
+    }
+  }
+}

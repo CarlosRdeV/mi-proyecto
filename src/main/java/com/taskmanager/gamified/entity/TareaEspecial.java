@@ -33,4 +33,12 @@ public class TareaEspecial extends Tarea {
     public boolean estaVigente() {
         return fechaLimite == null || LocalDateTime.now().isBefore(fechaLimite);
     }
+    
+    public Integer getXpPersonalizado() {
+        return super.getXpBase();
+    }
+    
+    public void setXpPersonalizado(Integer xpPersonalizado) {
+        super.setXpBase(xpPersonalizado);
+    }
 }

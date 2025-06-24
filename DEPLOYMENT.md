@@ -1,4 +1,5 @@
 # Guía de Despliegue - Task Manager Gamificado
+**Versión v1.3.0** - *Sistema completo con API REST funcional*
 
 ## 🚀 Ambientes Configurados
 

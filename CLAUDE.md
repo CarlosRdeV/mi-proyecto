@@ -1,4 +1,6 @@
 # CLAUDE.md
+**Versión v1.3.0** - *Sistema completo con API REST funcional*
+*Última actualización: 2024-12-23*
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -172,9 +174,18 @@ src/main/java/com/taskmanager/gamified/
 │   ├── UsuarioRepository.java     # CRUD + queries custom
 │   ├── TareaRepository.java       # CRUD + orden por dificultad
 │   ├── EventoRepository.java      # CRUD + eventos vigentes
-│   └── HistorialRepository.java   # CRUD + estadísticas
+│   └── HistorialTareaRepository.java # CRUD + estadísticas
+├── service/          # Lógica de Negocio
+│   ├── UsuarioService.java        # XP, niveles, streaks
+│   ├── TareaService.java          # Completar tareas, disponibilidad
+│   ├── EventoService.java         # Gestión de eventos multiplicadores
+│   └── EstadisticasService.java   # Métricas y estadísticas avanzadas
 └── controller/       # Controladores REST
-    └── TestController.java        # API endpoints con DTOs
+    ├── TestController.java        # API endpoints legacy con DTOs
+    ├── UsuarioController.java     # API completa de usuarios
+    ├── TareaController.java       # API completa de tareas
+    ├── EventoController.java      # API completa de eventos
+    └── EstadisticasController.java # API de estadísticas y dashboard
 ```
 
 ### Principios de Diseño
@@ -262,21 +273,91 @@ POST /api/test/usuarios
 # Response: UsuarioDTO | ErrorResponse
 ```
 
-### Endpoints Futuros (En desarrollo)
+### API REST Completa - Endpoints Implementados
+
+#### Usuarios (`/api/users`)
 ```bash
-# Usuarios
-GET /api/users/{id} - Obtener perfil de usuario
-POST /api/users - Crear usuario  
-GET /api/users/{id}/stats - Estadísticas del usuario
+# Gestión de usuarios
+GET /api/users - Obtener todos los usuarios
+GET /api/users/{id} - Obtener usuario por ID
+GET /api/users/nombre/{nombre} - Obtener usuario por nombre
+POST /api/users - Crear nuevo usuario
+PUT /api/users/{id}/login - Actualizar último login
+PUT /api/users/{id}/experiencia - Agregar XP manualmente
 
-# Tareas
-GET /api/tasks - Obtener todas las tareas disponibles
-POST /api/tasks/{id}/complete - Completar tarea
-GET /api/users/{userId}/history - Historial de tareas completadas
+# Progreso y estadísticas
+GET /api/users/{id}/progreso-nivel - Progreso hacia siguiente nivel
+GET /api/users/{id}/tarea-hoy - Verificar si completó tarea hoy
+GET /api/users/{id}/estadisticas-tareas - Estadísticas de tareas del usuario
 
-# Eventos  
-GET /api/events/active - Eventos activos
-POST /api/events - Crear evento (admin)
+# Health check
+GET /api/users/health - Estado del servicio de usuarios
+```
+
+#### Tareas (`/api/tasks`)
+```bash
+# Gestión de tareas
+GET /api/tasks - Obtener todas las tareas activas
+GET /api/tasks/{id} - Obtener tarea por ID
+GET /api/tasks/disponibles/{usuarioId} - Tareas disponibles para usuario
+POST /api/tasks/{id}/completar - Completar una tarea
+GET /api/tasks/{id}/puede-completar/{usuarioId} - Verificar disponibilidad
+
+# Historial y estadísticas
+GET /api/tasks/historial/{usuarioId}?limite=10 - Historial de completaciones
+GET /api/tasks/estadisticas/{usuarioId} - Estadísticas de tareas del usuario
+
+# Health check
+GET /api/tasks/health - Estado del servicio de tareas
+```
+
+#### Eventos (`/api/events`)
+```bash
+# Gestión de eventos
+GET /api/events - Obtener todos los eventos
+GET /api/events/vigentes - Eventos vigentes actualmente
+GET /api/events/{id} - Obtener evento por ID
+POST /api/events - Crear nuevo evento
+PUT /api/events/{id}/estado - Activar/desactivar evento
+PUT /api/events/{id}/extender - Extender duración del evento
+
+# Multiplicadores y estado
+GET /api/events/multiplicador-actual - Multiplicador efectivo actual
+GET /api/events/hay-vigentes - Verificar si hay eventos vigentes
+GET /api/events/en-fecha?fecha=YYYY-MM-DDTHH:MM:SS - Eventos en fecha específica
+
+# Estadísticas y health
+GET /api/events/estadisticas - Estadísticas de eventos
+GET /api/events/health - Estado del servicio de eventos
+```
+
+#### Estadísticas (`/api/stats`)
+```bash
+# Estadísticas generales
+GET /api/stats - Estadísticas generales del sistema
+GET /api/stats/avanzadas - Estadísticas avanzadas completas
+GET /api/stats/dashboard - Dashboard completo con todas las métricas
+
+# Estadísticas específicas
+GET /api/stats/niveles - Estadísticas de niveles de usuarios
+GET /api/stats/streaks - Estadísticas de streaks
+GET /api/stats/actividad-semanal - Actividad por día de la semana
+GET /api/stats/top-usuarios?limite=10 - Top usuarios por XP
+GET /api/stats/distribucion-dificultades - Distribución de dificultades
+
+# Health check
+GET /api/stats/health - Estado del servicio de estadísticas
+```
+
+#### Test (Legacy - Compatibilidad)
+```bash
+# Endpoints de prueba (mantenidos para compatibilidad)
+GET /api/test/health - Health check general
+GET /api/test/usuarios - Obtener todos los usuarios
+GET /api/test/tareas - Obtener todas las tareas activas
+GET /api/test/eventos - Obtener eventos vigentes
+GET /api/test/stats - Estadísticas básicas del sistema
+POST /api/test/usuarios - Crear usuario
 ```
 
 ## Testing
@@ -354,21 +435,28 @@ Ver archivo **FRONTEND_SPECS.md** para especificaciones completas del frontend w
 - **Arquitectura base**: Entidades JPA con herencia, DTOs, Mappers
 - **Base de datos**: H2 configurada con 21 tareas iniciales  
 - **Multi-ambiente**: DEV, QA, PROD completamente configurados
-- **API REST**: Endpoints con DTOs y validación Bean Validation
+- **Servicios de negocio**: UsuarioService, TareaService, EventoService, EstadisticasService
+- **API REST completa**: 5 controladores con 40+ endpoints funcionales
+- **Sistema de gamificación**: XP, niveles, streaks, eventos multiplicadores
+- **Estadísticas avanzadas**: Dashboard completo, métricas y analytics
 - **Testing completo**: 65 tests (unitarios, integración, controlador)
+- **Validación de seguridad**: Sistema de validación de vulnerabilidades implementado
 - **Documentación**: CLAUDE.md, DTOS.md, DEPLOYMENT.md actualizados
 
-### 🔄 En Desarrollo
-- Servicios de lógica de negocio (XP, niveles, streaks)
-- Controladores REST completos (/api/users, /api/tasks, /api/events)
-- Sistema de logros y estadísticas avanzadas
+### 🎯 Sistema Funcional
+El **Task Manager Gamificado** está **completamente funcional** con:
+- **API REST robusta**: `/api/users`, `/api/tasks`, `/api/events`, `/api/stats`
+- **Lógica de gamificación completa**: Cálculo automático de XP, niveles y streaks
+- **Sistema de eventos**: Multiplicadores temporales para bonificaciones
+- **Dashboard de estadísticas**: Métricas avanzadas y rankings de usuarios
+- **Gestión de tareas inteligente**: Disponibilidad por usuario y restricciones temporales
 
-### 📋 Próximos Pasos
-1. Implementar servicios de negocio para cálculo de XP y niveles
-2. Crear controladores REST para funcionalidad completa
-3. Sistema de logros y rankings entre usuarios
-4. Migración a OAuth2 para autenticación
-5. Frontend web (especificaciones en FRONTEND_SPECS.md)
+### 📋 Próximos Pasos (Opcional)
+1. **Sistema de logros y badges**: Reconocimientos por hitos específicos
+2. **Rankings globales**: Tablas de líderes y competencias entre usuarios
+3. **Migración a OAuth2**: Autenticación robusta para múltiples usuarios
+4. **Frontend web**: Implementar especificaciones de FRONTEND_SPECS.md
+5. **Notificaciones push**: Sistema de recordatorios y alertas
 
 ## Escalabilidad Futura
 

@@ -16,6 +16,22 @@ public interface HistorialTareaRepository extends JpaRepository<HistorialTarea, 
            "ORDER BY ht.fechaCompletacion DESC")
     List<HistorialTarea> findByUsuarioIdOrderByFechaDesc(@Param("usuarioId") Long usuarioId);
     
+    // Alias para compatibilidad con servicios
+    default List<HistorialTarea> findByUsuarioIdOrderByFechaCompletacionDesc(Long usuarioId) {
+        return findByUsuarioIdOrderByFechaDesc(usuarioId);
+    }
+    
+    @Query("SELECT ht FROM HistorialTarea ht WHERE ht.usuario.id = :usuarioId " +
+           "AND ht.fechaCompletacion BETWEEN :fechaInicio AND :fechaFin")
+    List<HistorialTarea> findByUsuarioIdAndFechaCompletacionBetween(@Param("usuarioId") Long usuarioId,
+                                                                   @Param("fechaInicio") LocalDateTime fechaInicio,
+                                                                   @Param("fechaFin") LocalDateTime fechaFin);
+    
+    @Query("SELECT ht FROM HistorialTarea ht WHERE ht.usuario.id = :usuarioId " +
+           "AND TYPE(ht.tarea) = :tipoTarea")
+    List<HistorialTarea> findByUsuarioIdAndTareaTipo(@Param("usuarioId") Long usuarioId,
+                                                     @Param("tipoTarea") String tipoTarea);
+    
     @Query("SELECT ht FROM HistorialTarea ht WHERE ht.usuario.id = :usuarioId " +
            "AND ht.fechaCompletacion >= :fechaDesde ORDER BY ht.fechaCompletacion DESC")
     List<HistorialTarea> findByUsuarioIdAndFechaDesde(@Param("usuarioId") Long usuarioId, 

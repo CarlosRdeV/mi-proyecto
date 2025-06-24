@@ -73,7 +73,7 @@ public class TestController {
         long tareasActivas = tareaRepository.findByActivaTrueOrderByDificultadAscNombreAsc().size();
         long eventosVigentes = eventoRepository.findEventosVigentes(LocalDateTime.now()).size();
         
-        return new EstadisticasDTO(totalUsuarios, totalTareas, totalEventos, tareasActivas, eventosVigentes);
+        return new EstadisticasDTO(totalUsuarios, totalTareas, totalEventos, tareasActivas, LocalDateTime.now());
     }
     
     @PostMapping("/usuarios")

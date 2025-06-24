@@ -15,14 +15,16 @@ public class EstadisticasDTO {
     }
     
     public EstadisticasDTO(Long totalUsuarios, Long totalTareas, Long totalEventos,
-                          Long tareasActivas, Long eventosVigentes) {
-        this();
+                          Long totalCompletaciones, LocalDateTime timestamp) {
         this.totalUsuarios = totalUsuarios;
         this.totalTareas = totalTareas;
         this.totalEventos = totalEventos;
-        this.tareasActivas = tareasActivas;
-        this.eventosVigentes = eventosVigentes;
+        this.tareasActivas = totalCompletaciones;
+        this.eventosVigentes = 0L;
+        this.timestamp = timestamp;
     }
+    
+    public Long getTotalCompletaciones() { return tareasActivas; }
     
     // Getters y Setters
     public Long getTotalUsuarios() { return totalUsuarios; }
